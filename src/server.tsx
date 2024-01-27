@@ -6,8 +6,9 @@ type Bindings = {
   DB: D1Database
 }
 
-type FeedRow = {
+export type FeedRow = {
   url: string
+  who: string
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -18,15 +19,22 @@ app.get(
   '*',
   jsxRenderer(({ children }) => {
     return (
-      <html lang="en" data-theme="dark">
+      <html lang="en">
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="stylesheet" href="/pico.css" />
+          <link rel="stylesheet" href="/pico_ext.css" />
           <title>feedz</title>
         </head>
-        <body>{children}</body>
-        <script src="/todo.js"></script>
+        <body>
+          <div class="pizzaLogo">
+            <a href="/#">🍕</a>
+            <a href="/add">➕</a>
+          </div>
+          {children}
+        </body>
+        <script src="/bundle.js"></script>
       </html>
     )
   })
@@ -37,11 +45,9 @@ app.get('/', async (c) => {
   if (c.req.query('json')) return c.json(ok)
 
   return c.render(
-    <div class="container" style={{ marginTop: 60 }}>
-      <div style={{ position: 'fixed', top: 30, right: 30 }}>
-        <a href="/add">+ add</a>
-      </div>
-      <div id="display">...</div>
+    <div>
+      <div id="ReadView"></div>
+      <div id="ListView"></div>
       <script
         id="dato"
         type="application/json"
@@ -49,6 +55,15 @@ app.get('/', async (c) => {
           __html: JSON.stringify(ok),
         }}
       />
+    </div>
+  )
+})
+
+app.get('/read', async (c) => {
+  return c.render(
+    <div>
+      <div id="readable" class="container" style={{ paddingTop: 50 }}></div>
+      <script src="/bundle.js"></script>
     </div>
   )
 })

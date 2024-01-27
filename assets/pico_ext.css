@@ -1,0 +1,32 @@
+.pizzaLogo {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  padding: 10px;
+  font-size: 42px;
+}
+.pizzaLogo a,
+.pizzaLogo a:focus {
+  text-decoration: none;
+  background: transparent !important;
+}
+
+#ReadView > .container,
+#ListView > .container {
+  margin-top: 80px;
+}
+
+#ReadView pre {
+  padding: 20px;
+}
+
+#ListView {
+  height: 100vh;
+  overflow: scroll;
+}
+
+.loading {
+  text-align: center;
+  font-size: 48px;
+  margin-top: 100px;
+}

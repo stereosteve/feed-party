@@ -2,13 +2,17 @@
   "scripts": {
     "db": "wrangler d1 execute feed-party-db --local --file=./schema.sql",
     "db:prod": "wrangler d1 execute feed-party-db --file=./schema.sql",
-    "dev": "wrangler dev src/server.tsx",
-    "deploy": "wrangler deploy --minify src/server.tsx"
+    "dev": "concurrently 'bun dev:server' 'bun dev:client'",
+    "dev:server": "wrangler dev src/server.tsx",
+    "dev:client": "bun build --watch ./client/reader.ts --outfile=assets/bundle.js",
+    "deploy": "bun build ./client/reader.ts --outfile=assets/bundle.js && wrangler deploy --minify src/server.tsx"
   },
   "dependencies": {
+    "@mozilla/readability": "^0.5.0",
     "hono": "^3.12.7"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "@cloudflare/workers-types": "^4.20231218.0",
     "wrangler": "^3.22.0"
   }
