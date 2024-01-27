@@ -1,6 +1,6 @@
-drop table feeds;
+drop table if exists feeds;
 
-create table feeds (
+create table if not exists feeds (
   url text primary key,
   who text
 );

@@ -1,6 +1,7 @@
 {
   "scripts": {
     "db": "wrangler d1 execute feed-party-db --local --file=./schema.sql",
+    "db:prod": "wrangler d1 execute feed-party-db --file=./schema.sql",
     "dev": "wrangler dev src/server.tsx",
     "deploy": "wrangler deploy --minify src/server.tsx"
   },
