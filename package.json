@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "db": "wrangler d1 execute feed-party-db --local --file=./schema.sql",
+    "dev": "wrangler dev src/server.tsx",
+    "deploy": "wrangler deploy --minify src/server.tsx"
+  },
+  "dependencies": {
+    "hono": "^3.12.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "wrangler": "^3.22.0"
+  }
+}
