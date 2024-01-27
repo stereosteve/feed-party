@@ -54,10 +54,17 @@ app.get('/', async (c) => {
 })
 
 app.get('/fetch', async (c) => {
-  // const url = c.req.query('url')
-  // if (!url) return c.text('no url', 400)
-  const got = await fetch(c.req.query('url')!)
-  const maxAge = 60 * 2 // cache two mins
+  const url = c.req.query('url')
+  if (!url) return c.text('no url', 400)
+
+  // cache for a few minutes
+  const maxAge = 60 * 10
+  const got = await fetch(url, {
+    cf: {
+      cacheTtl: maxAge,
+      cacheEverything: true,
+    },
+  })
   return c.body(got.body, 200, {
     'Cache-Control': `public, max-age=${maxAge}`,
   })
