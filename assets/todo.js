@@ -4,20 +4,39 @@ if (dato) {
 
   const allItems = []
 
-  datoData.results.map(async (r) => {
-    const ok = await fetch(`/fetch?url=${encodeURIComponent(r.url)}`)
+  datoData.results.map(async (feed) => {
+    const ok = await fetch(`/fetch?url=${encodeURIComponent(feed.url)}`)
     const txt = await ok.text()
     const dom = new DOMParser().parseFromString(txt, 'text/xml')
+    const feedHost = new URL(feed.url).host
 
+    function addItem(item) {
+      item.pubDate = new Date(item.pubDate)
+      item.link = new URL(item.link, feed.url)
+      item.host = feedHost
+      item.niceDate = item.pubDate.toLocaleDateString()
+      item.who = feed.who
+      if (item.title) {
+        allItems.push(item)
+      }
+    }
+
+    // rss
     for (const itemXml of dom.querySelectorAll('item')) {
       const item = {}
       for (const field of ['title', 'link', 'pubDate']) {
         item[field] = itemXml.querySelector(field).textContent
       }
-      item.pubDate = new Date(item.pubDate)
-      if (item.title) {
-        allItems.push(item)
-      }
+      addItem(item)
+    }
+
+    // atom
+    for (const itemXml of dom.querySelectorAll('entry')) {
+      const item = {}
+      item.title = itemXml.querySelector('title')?.textContent
+      item.pubDate = itemXml.querySelector('updated')?.textContent
+      item.link = itemXml.querySelector('link').href
+      addItem(item)
     }
 
     rerender()
@@ -31,13 +50,14 @@ if (dato) {
     <div>
       <hgroup>
         <h4>
-          <a href="${item.link}" target="_blank">
+          <a href="${item.link}">
             ${item.title}
           </a>
         </h4>
         <div>
-          ${new URL(item.link).host} -
-          ${item.pubDate.toLocaleDateString()}
+          ${item.host} -
+          ${item.niceDate} -
+          ${item.who}
         </div>
       </hgroup>
     </div>
@@ -45,7 +65,6 @@ if (dato) {
       )
       .join('')
 
-    console.log(html)
     document.getElementById('display').innerHTML = html
   }
 }

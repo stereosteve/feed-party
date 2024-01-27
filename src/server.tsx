@@ -69,7 +69,14 @@ app.get('/add', (c) => {
       <article>
         <h3>Add Feed</h3>
         <form method="POST">
-          <input type="url" name="url" placeholder="Feed URL" />
+          <label>
+            Feed URL
+            <input type="url" name="url" placeholder="Feed URL" required />
+          </label>
+          <label>
+            Your Name
+            <input type="text" name="who" placeholder="Your Name" required />
+          </label>
           <button>submit</button>
         </form>
       </article>
@@ -79,7 +86,9 @@ app.get('/add', (c) => {
 
 app.post('/add', async (c) => {
   const body = await c.req.parseBody()
-  await c.env.DB.prepare('insert into feeds (url) values (?)').bind(body.url).run()
+  await c.env.DB.prepare('insert into feeds (url, who) values (?, ?) on conflict do nothing')
+    .bind(body.url, body.who)
+    .run()
   return c.redirect('/')
 })
 
